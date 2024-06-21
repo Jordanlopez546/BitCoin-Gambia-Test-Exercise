@@ -2,9 +2,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PostService } from './post.service';
 import { prisma } from '../../prisma/prisma.client';
-import { CreatePostDto } from 'src/common/types';
+import { CreatePostDto } from '../../src/common/types';
 
-jest.mock('../../prisma/prisma.client');
+// Mock Prisma Client
+jest.mock('../../prisma/prisma.client', () => ({
+  prisma: {
+    post: {
+      create: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+    },
+  },
+}));
 
 describe('PostService', () => {
   let service: PostService;

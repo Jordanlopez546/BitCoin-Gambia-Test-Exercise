@@ -2,9 +2,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CommentService } from './comment.service';
 import { prisma } from '../../prisma/prisma.client';
-import { CreateCommentDto } from 'src/common/types';
+import { CreateCommentDto } from '../../src/common/types';
 
-jest.mock('../../prisma/prisma.client');
+// Mock Prisma Client
+jest.mock('../../prisma/prisma.client', () => ({
+  prisma: {
+    comment: {
+      create: jest.fn(),
+      findMany: jest.fn(),
+    },
+  },
+}));
 
 describe('CommentService', () => {
   let service: CommentService;

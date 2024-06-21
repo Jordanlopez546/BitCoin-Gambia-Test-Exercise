@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  InternalServerErrorException,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { PostService } from './post.service';
-import { CreatePostDto } from 'src/common/types';
+import { CreatePostDto } from '../../src/common/types';
 
 @Controller('posts')
 export class PostController {
@@ -9,19 +17,37 @@ export class PostController {
 
   @Post()
   // TODO: Implement the endpoint to create a post
-  createPost(@Body() data: CreatePostDto) {
-    // Implementation goes here
+  async createPost(@Body() data: CreatePostDto) {
+    try {
+      const post = await this.postService.createPost(data);
+      return post;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Get(':id')
   // TODO: Implement the endpoint to find a post by id
-  findPostById(@Param('id') id: number) {
-    // Implementation goes here
+  async findPostById(@Param('id', ParseIntPipe) id: number) {
+    try {
+      const post = await this.postService.findPostById(id);
+      if (!post) {
+        return { message: 'Post not found' };
+      }
+      return post;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Get()
   // TODO: Implement the endpoint to fetch all posts
-  getAllPosts() {
-    // Implementation goes here
+  async getAllPosts() {
+    try {
+      const posts = await this.postService.getAllPosts();
+      return posts;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }

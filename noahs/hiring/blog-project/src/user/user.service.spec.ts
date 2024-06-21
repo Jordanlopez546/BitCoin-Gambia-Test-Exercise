@@ -2,9 +2,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { prisma } from '../../prisma/prisma.client';
-import { CreateUserDto } from 'src/common/types';
+import { CreateUserDto } from '../../src/common/types';
 
-jest.mock('../../prisma/prisma.client');
+// Mock Prisma Client
+jest.mock('../../prisma/prisma.client', () => ({
+  prisma: {
+    user: {
+      create: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+    },
+  },
+}));
 
 describe('UserService', () => {
   let service: UserService;

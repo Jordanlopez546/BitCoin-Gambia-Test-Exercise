@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { prisma } from '../../prisma/prisma.client';
-import { CreateCommentDto } from 'src/common/types';
+import { CreateCommentDto } from '../../src/common/types';
 
 @Injectable()
 export class CommentService {
@@ -9,16 +9,33 @@ export class CommentService {
 
   // TODO: Implement the method to create a comment
   async createComment(data: CreateCommentDto) {
-    // Implementation goes here
+    try {
+      const comment = await prisma.comment.create({ data: data });
+      return comment;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   // TODO: Implement the method to find comments by post id
   async findCommentsByPostId(postId: number) {
-    // Implementation goes here
+    try {
+      const comments = await prisma.comment.findMany({
+        where: { postId: postId },
+      });
+      return comments;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   // TODO: Implement the method to fetch all comments
   async getAllComments() {
-    // Implementation goes here
+    try {
+      const comments = await prisma.comment.findMany();
+      return comments;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }

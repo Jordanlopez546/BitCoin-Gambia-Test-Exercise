@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { prisma } from '../../prisma/prisma.client';
-import { CreatePostDto } from 'src/common/types';
+import { CreatePostDto } from '../../src/common/types';
 
 @Injectable()
 export class PostService {
@@ -9,16 +9,31 @@ export class PostService {
 
   // TODO: Implement the method to create a post
   async createPost(data: CreatePostDto) {
-    // Implementation goes here
+    try {
+      const post = await prisma.post.create({ data: data });
+      return post;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   // TODO: Implement the method to find a post by id
   async findPostById(id: number) {
-    // Implementation goes here
+    try {
+      const post = await prisma.post.findUnique({ where: { id: id } });
+      return post;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   // TODO: Implement the method to fetch all posts
   async getAllPosts() {
-    // Implementation goes here
+    try {
+      const posts = await prisma.post.findMany();
+      return posts;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }
